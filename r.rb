@@ -1,1 +1,1 @@
-require './lib/challay.rb'
+require './lib/array.rb'

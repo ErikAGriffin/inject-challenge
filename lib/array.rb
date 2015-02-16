@@ -1,46 +1,23 @@
 class Array
 
+  def inject_me(init= :no_init,method= :no_method,&block)
 
-  def my_inject(sum=first,method=nil)
-
-    if method == nil && sum != first
-      if !block_given?
-      method = sum
-      sum = first
-      end
+    if !/[0-9]/.match(init.to_s) && init != :no_init
+      method = init
+      init = 0
     end
-    if method == nil
-      raise 'no block given' if !block_given? && method == nil
-      each do |x|
-        if index(x) == 0 && sum != first
-          sum = yield sum,x
-        end
-        if index(x) != 0
-          sum = yield sum,x
-        else
-          sum
-        end
-      end
-    else
-      each do |x|
-        if index(x) == 0 && sum != first
-          sum = x.send(method,sum)
-        end
-        if index(x) != 0
-          sum = x.send(method,sum)
-        end
-      end
-    end
-    sum
-  end
 
-  def simple_inject(init=nil,&block)
+    if method != :no_method
+      return self.inject_me(init) {|x,y| x.send(method,y)}
+    end
+
     raise 'no block given' if !block_given?
     if (self.length != 0)
       init==nil ? init = 0 : init
-      x = shift
+      copy = self.dup
+      x = copy.shift
       init = block.call(init,x)
-      simple_inject(init,&block)
+      copy.inject_me(init,&block)
     else
       return init
     end
